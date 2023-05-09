@@ -32,14 +32,22 @@ def add_tables(engine, json_adress):
 
 #получение данных из БД
 def info_tables (engine, Publisher_name=None):
-    subq = session.query(Book.title, Stock.id, Stock.id_shop).join(Publisher).join(Stock).\
-            filter(Publisher.name == Publisher_name).subquery()
-    q = session.query(subq.c.title, Shop.name, Sale.price, Sale.date_sale).join(subq, Shop.id == subq.c.id_shop).\
-            join(Sale, Sale.id_stock == subq.c.id).all()
-    # q = session.query(subq.c.title, Sale.price, Sale.date_sale).join(subq, Sale.id == subq.c.id).all()
-    for title, name, price, data_sale in q:
-        print(f'{title:<40} |  {name:<10} | {price:<5} | {data_sale}')
-
+    if Publisher_name.isdigit() != True:
+        subq = session.query(Book.title, Stock.id, Stock.id_shop).join(Publisher).join(Stock).\
+                filter(Publisher.name == Publisher_name).subquery()
+        q = session.query(subq.c.title, Shop.name, Sale.price, Sale.date_sale).join(subq, Shop.id == subq.c.id_shop).\
+                join(Sale, Sale.id_stock == subq.c.id).all()
+        # q = session.query(subq.c.title, Sale.price, Sale.date_sale).join(subq, Sale.id == subq.c.id).all()
+        for title, name, price, data_sale in q:
+            print(f'{title:<40} |  {name:<10} | {price:<5} | {data_sale}')
+    else:
+        subq = session.query(Book.title, Stock.id, Stock.id_shop).join(Publisher).join(Stock).\
+                filter(Publisher.id == Publisher_name).subquery()
+        q = session.query(subq.c.title, Shop.name, Sale.price, Sale.date_sale).join(subq, Shop.id == subq.c.id_shop).\
+                join(Sale, Sale.id_stock == subq.c.id).all()
+        # q = session.query(subq.c.title, Sale.price, Sale.date_sale).join(subq, Sale.id == subq.c.id).all()
+        for title, name, price, data_sale in q:
+            print(f'{title:<40} |  {name:<10} | {price:<5} | {data_sale}')
 
 
 try:
